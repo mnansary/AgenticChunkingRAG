@@ -1,0 +1,6 @@
+user: vpa                                                           # user name for postgres database 
+password: vpa1234                                                  # password for the postgres database
+host: localhost                                                     # server address to connect database
+port: 5401                                                          # port of the server where the database is served
+container: vpa-collected-data                                        # database docker container name                                                      
+database: vpa_annotated_data                                        # name of the database to use
