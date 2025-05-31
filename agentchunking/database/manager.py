@@ -7,7 +7,7 @@ from psycopg2 import sql
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import Session
 from psycopg2.extensions import register_adapter, AsIs
-from agentchunking.database.definitions import (Base,SQLTable,AnnotationTable)
+from agentchunking.database.definitions import (Base,SQLTable,AnnotationTable,SegmentationTable)
 """ psycopg2 throws datatype error into postgres DB.
 Following block of code can solve this issue.
 Source: https://stackoverflow.com/a/56390591
@@ -152,6 +152,7 @@ class SQLDatabaseManager:
             if self.create_db:
                 Base.metadata.create_all(self.engine)
             self.annotation_table = SQLTable(self.engine, AnnotationTable.__table__)
+            self.segmentation_table= SQLTable(self.engine, SegmentationTable.__table__)
         except Exception as exc:
             logger.error('Exception occured while table defining. Error: {}'.format(exc))
             sys.exit(-1)
@@ -180,6 +181,32 @@ class SQLDatabaseManager:
         else:
             # This path might not be reached if SQLTable.insert exits on error
             logger.error(f"Failed to insert data into {self.annotation_table.table.name}.")
+        return return_code
+    
+    def segmentation_table_insert(self, insert_data: list[dict]) -> int:
+        """
+        Insert data into the segmentation_table.
+
+        Args:
+            insert_data (list[dict]): A list of dictionaries, where each dictionary
+                                      represents a row to be inserted. Column names
+                                      are keys and their values are the data.
+        Returns:
+            int: Returns 0 if successful, otherwise an error might lead to sys.exit
+                 via the underlying SQLTable.insert method.
+        """
+        logger.info(f"Attempting to insert {len(insert_data)} rows into {self.segmentation_table.table.name}.")
+        if not hasattr(self, 'segmentation_table'):
+            logger.error("Segmentation table is not initialized in SQLDatabaseManager.")
+            sys.exit(-1)
+
+        return_code = self.segmentation_table.insert(insert_data)
+
+        if return_code == 0:
+            logger.info(f"Successfully inserted data into {self.segmentation_table.table.name}.")
+        else:
+            # This path might not be reached if SQLTable.insert exits on error
+            logger.error(f"Failed to insert data into {self.segmentation_table.table.name}.")
         return return_code
     
 

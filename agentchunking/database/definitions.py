@@ -77,6 +77,26 @@ class AnnotationTable(Base):
             f"site_name_english={self.site_name_english!r}, text_data_score={self.text_data_score!r})"
         )
 
+class SegmentationTable(Base):
+    __tablename__ = "segmentation_table"
+
+    passage_id = Column(String, nullable=False)
+    start=Column(Integer,nullable=False)
+    end =Column(Integer,nullable=False)
+    text= Column(String, nullable=False)  # Assuming text content is mandatory
+    data= Column(String,nullable=False)
+    
+    # Define composite primary key
+    __table_args__ = (
+        PrimaryKeyConstraint('passage_id',"start","end"),
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"passage_id={self.passage_id!r}, text='{self.text[:50]}...', data='{self.data[:50]}'" # Truncate text for brevity
+            f"start={self.start!r},end={self.end!r}"
+        )
+
 
 class SQLTable:
     """SQL table class to handle manipulating data to SQL Database. 
