@@ -27,6 +27,7 @@ def enforce_copier_rpm():
 
     if copier_request_count >= COPIER_MAX_ALLOWED_RPM:
         sleep_time = max(0, 60 - elapsed)
+        if sleep_time==0:sleep_time=60
         logger.warning(f"Reached COPIER RPM limit. Sleeping for {sleep_time:.2f} seconds.")
         time.sleep(sleep_time)
         # Reset after sleep
