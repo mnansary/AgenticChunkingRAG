@@ -18,7 +18,11 @@ if __name__ == "__main__":
                 idx += 1  # proceed only if success
             except Exception as e:
                 logger.error(f"Segmentation failed for passage {passage_id}: {e}")
-                logger.info("Sleeping for 60 seconds before retrying...")
-                time.sleep(60)  # wait before retrying
+                if "503 UNAVAILABLE" in str(e):
+                    logger.info("Server Is overloaded Trting again in 10 mins")
+                    time.sleep(600)
+                else:
+                    logger.info("Sleeping for 60 seconds before retrying...")
+                    time.sleep(60)  # wait before retrying
     else:
         logger.info("All data has been segmented. Rewriting can be initialized.")
