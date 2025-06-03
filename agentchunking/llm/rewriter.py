@@ -2,7 +2,7 @@ from google.genai import types
 from pydantic import BaseModel, Field
 from typing import Optional,Any
 import json 
-from agentchunking.constants import GOOGLE_MODEL
+from agentchunking.constants import REWRITER_GOOGLE_MODEL
 # --------- Gemini Configuration ---------
 class RewrittenPassage(BaseModel):
     rewritten_passage: str = Field(..., description="Self-contained, rewritten Bengali passage")
@@ -43,7 +43,7 @@ def rewrite_passage(topic: str, heading: str, passage: str,client:Any) -> Option
 
         
         response = client.models.generate_content(
-            model=GOOGLE_MODEL,
+            model=REWRITER_GOOGLE_MODEL,
             contents=prompt,
             config=rewrite_gen_config,
         )

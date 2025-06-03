@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List, Tuple
 import json
 from agentchunking.constants import COPIER_GOOGLE_MODEL,COPIER_MAX_ALLOWED_RPD,COPIER_MAX_ALLOWED_RPM
-from agentchunking.clientManagement import get_available_client,create_wrapped_clients_google
+from agentchunking.clientManagement import create_wrapped_clients_google
 from loguru import logger
 #------------------------------------------------------------------------------------------------------------------
 google_clients=create_wrapped_clients_google(COPIER_MAX_ALLOWED_RPD,COPIER_MAX_ALLOWED_RPM)
@@ -65,7 +65,7 @@ def shorten_text_llama(text: str, client) -> str:
         logger.warning(f"Json formatting not found:{e}")
         return result.text.replace("new_passage","").strip()
 #------------------------------------------------------------------------------------------------------------------
+
 def shorten_text(chunk: str) -> str:
-    client_wrapper = get_available_client(google_clients)
-    client = client_wrapper.use()
+    client = google_clients.get_client()  # now using round-robin logic
     return shorten_text_goole_api(chunk, client)
